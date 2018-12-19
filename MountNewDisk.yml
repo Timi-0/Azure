@@ -1,0 +1,96 @@
+--- #To create and attach a new Data disk to an existing Linux virtual machine
+##Create and attach VM Disk
+- name: "Attach Data disk to existing Linux VM"
+  connection: local
+  hosts: localhost
+
+  tasks:
+   - name: "Attaching Data disk to Linux VM"
+     vars:
+       rgname: "awx"
+       vmname: "AWX-REDHAT"
+       disksizegb: "10"
+     shell: az vm disk attach --resource-group "{{ rgname }}" --vm-name "{{ vmname }}" --disk "{{ vmname }}" --size-gb "{{ disksizegb }}" --sku Premium_LRS --new
+
+#####################################################################################################################
+#####################################################################################################################
+
+   - name: Exclude existing HDD devices
+     set_fact:
+      devs_excluded: '/dev/sda|/dev/sdb'
+   - debug: msg="{{ devs_excluded}}"
+
+   - name: Set variable for new Data Disk device id (For example - /dev/sdc)
+     shell: ls -1 /dev/sd*|egrep -v {{ devs_excluded|quote }}|egrep -v '[0-9]$'
+     register: devs
+     ignore_errors: yes
+   - debug: msg="{{ devs.rc }}" 
+   - debug: msg="{{ devs.stdout }}"
+
+   - name: convert stdout to set_fact dev_id (IE - /dev/sdc)
+     set_fact:
+       devs_id: "{{ devs.stdout }}"
+     when: devs.rc == 0
+   - debug: msg="{{ devs_id }}"
+     when: devs.rc == 0
+
+   - name: convert stdout to set_fact dev_id_num (IE - /dev/sdc1)
+     set_fact:
+       devs_id_num: "{{ devs.stdout }}1"
+     when: devs.rc == 0
+   - debug: msg="{{ devs_id_num }}"
+     when: devs.rc == 0
+
+   - name: partition secondary HDD device
+     parted:
+       device: "{{ devs_id }}"
+       number: 1
+       flags: [ lvm ]
+       state: present
+     when: devs.rc == 0
+
+   - name: Makes file system on block device
+     filesystem:
+       fstype: ext4
+       dev: "{{ devs_id_num }}"
+     when: devs.rc == 0
+
+   - name: new directory to mount data disk to
+     file:
+       path=/datadisk
+       state=directory
+     when: devs.rc == 0
+
+   - name: shell command to gather UUID
+     shell: blkid -s UUID -o value {{ devs_id_num|quote }}
+     register: dev_uuid
+     when: devs.rc == 0
+   - debug: msg="{{ dev_uuid.stdout }}"
+     when: devs.rc == 0
+
+   - name: Modify the etc/fstab for mount persistence over reboots
+     mount:
+       path: /datadisk
+       src: "UUID={{ dev_uuid.stdout }}"
+       fstype: ext4
+       opts: defaults,nofail
+       state: mounted
+     when: devs.rc == 0
+
+   - name: reboot guest for fstab verification
+     shell: 'sleep 1 && shutdown -r now "Reboot triggered by Ansible" && sleep 1'
+     async: 1
+     poll: 0
+     ignore_errors: yes
+     when: devs.rc == 0
+
+   - name: Wait for linux server to respond to ssh
+     wait_for:
+       host: "{{ inventory_hostname }}"
+       port: "22"
+       state: started         # Port should be open
+       sleep: 10              #
+       delay: 15               # No wait before first check (sec)
+       timeout: 300           # Stop checking after timeout (sec)
+     delegate_to: 127.0.0.1
+     when: devs.rc == 0
