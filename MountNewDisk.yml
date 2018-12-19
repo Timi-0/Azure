@@ -10,7 +10,7 @@
        rgname: "awx"
        vmname: "AWX-REDHAT"
        disksizegb: "10"
-     shell: az vm disk attach --resource-group "{{ rgname }}" --vm-name "{{ vmname }}" --disk "{{ vmname }}" --size-gb "{{ disksizegb }}" --sku Standard_LRS --new
+     command: az vm disk attach --resource-group "{{ rgname }}" --vm-name "{{ vmname }}" --disk "{{ vmname }}" --size-gb "{{ disksizegb }}" --sku Standard_LRS --new
 
 #####################################################################################################################
 #####################################################################################################################
