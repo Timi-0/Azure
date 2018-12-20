@@ -1,0 +1,6 @@
+- name: "Adding DataDisk to Virtual Machines"
+  hosts: localhost
+  connection: local
+  tasks:
+  - import_role:
+      name: MountNewDisk
