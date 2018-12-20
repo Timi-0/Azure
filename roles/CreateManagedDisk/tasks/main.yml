@@ -1,0 +1,18 @@
+- name: Create managed disk
+  vars:
+    vmname: "AWX-REDHAT"
+    diskname: "AWX-REDHAT"
+    rgname: "awx"
+    disksizegb: "10"
+  azure_rm_managed_disk:
+    name: "{{ diskname }}"
+    location: eastus
+    resource_group: "{{ rgname }}"
+    disk_size_gb: "{{ disksizegb }}"
+- name: Mount the managed disk to VM
+  azure_rm_managed_disk:
+    name: "{{ diskname }}"
+    location: eastus
+    resource_group: "{{ rgname }}"
+    disk_size_gb: "{{ disksizegb }}"
+    managed_by: "{{ vmname }}"
