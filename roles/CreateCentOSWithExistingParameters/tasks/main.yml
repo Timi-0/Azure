@@ -1,0 +1,37 @@
+- name: "Create a {{nic_root_name}}X network interface for each VM"
+    azure_rm_networkinterface:
+    name: "{{nic_root_name}}{{item}}"
+    resource_group: "{{resourcegroup_name}}"
+    virtual_network: "{{virtualnetwork_name}}"
+    subnet_name: "{{subnet_name}}"
+    security_group: "{{securitygroup_name}}"
+    ip_configurations:
+        - name: "ipconfig"
+        public_ip_address_name: "{{public_ip_name}}"
+        primary: True
+    with_sequence: count="{{instances_number}}"
+- name: "Create {{vm_root_name}}X CentOS VM with existing NIC"
+    azure_rm_virtualmachine:
+    resource_group: "{{resourcegroup_name}}"
+    name: "{{vm_root_name}}{{item}}CentOS"
+    vm_size: "{{vm_size}}"
+    managed_disk_type: "{{managed_disk_type}}"
+    data_disks:
+    - lun: 0
+        disk_size_gb: 4
+        managed_disk_type: "{{managed_disk_type}}"
+    - lun: 1
+        disk_size_gb: 4
+        managed_disk_type: "{{managed_disk_type}}"
+    admin_username: "{{admin_username}}"
+    ssh_password_enabled: false
+    ssh_public_keys:
+        - path: "/home/{{admin_username}}/.ssh/authorized_keys"
+        key_data: "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAjpB0z2o7gjgQK9Rw1SWXIchvdahF6VA76traUnb2yA9+SGtim/Az36vtrPGEvLiiSwR0nBaXI/nV5U8+DXgjuLXj/fcglJrmyo8bo5qCR8TxV0no1uPkH+xV3U86esUHxtwllmugCmVv/3Ce2LB12ZP0vXaaKwkXXn34yxMtSOf1hmUHYRWATv1xhPkeA0XLAO2LHeK5ZGQAFbIe+7xWMtoVTTM3mamG+26PBqIiqAfqjhrJiw2Ie2DbS9aAvIAfKV0dxuJFSrDt9Sn4/YIQH0HwkQDpN9r4K4Nva+C0RH4NZsjlhN06j8WJFBinRRYzBVW8lMeH0x745M8ZyEgrTw== rsa-key-20181205"
+    network_interface_names: "{{nic_root_name}}{{item}}"
+    image:
+        offer: CentOS
+        publisher: OpenLogic
+        sku: '7.4'
+        version: latest
+    with_sequence: count="{{instances_number}}"
