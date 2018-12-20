@@ -3,8 +3,6 @@
 - name: "Attach Data disk to existing Linux VM"
   connection: local
   hosts: localhost
-  become: true
-
   tasks:
    - name: "Attaching Data disk to Linux VM"
      vars:
