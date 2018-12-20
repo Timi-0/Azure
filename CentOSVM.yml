@@ -4,3 +4,6 @@
   vars:
     - public_ip_name: "{{project_prefix}}-ip"
     - nic_root_name: "{{project_prefix}}-nic"
+  tasks:
+  - import_role:
+      name: CreateCentOSWithExistingParameters
