@@ -5,8 +5,4 @@
   hosts: localhost
   tasks:
    - name: "Attaching Data disk to Linux VM"
-     vars:
-       rgname: undefined
-       vmname: undefined
-       disksizegb: undefined
      command: az vm disk attach --resource-group "{{ rgname }}" --vm-name "{{ vmname }}" --disk "awxdisk1" --size-gb "{{ disksizegb }}" --sku Standard_LRS --new
