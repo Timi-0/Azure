@@ -9,4 +9,4 @@
        rgname: undefined
        vmname: undefined
        disksizegb: undefined
-     shell: az vm disk attach --resource-group "{{ rgname }}" --vm-name "{{ vmname }}" --disk "awxdisk1" --size-gb "{{ disksizegb }}" --sku Standard_LRS --new
+     command: az vm disk attach --resource-group "{{ rgname }}" --vm-name "{{ vmname }}" --disk "awxdisk1" --size-gb "{{ disksizegb }}" --sku Standard_LRS --new
