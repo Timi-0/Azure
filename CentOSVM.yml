@@ -1,0 +1,6 @@
+- name: "Creating Windows Server(s) with existing parameters"
+  hosts: localhost
+  connection: local
+  vars:
+    - public_ip_name: "{{project_prefix}}-ip"
+    - nic_root_name: "{{project_prefix}}-nic"
