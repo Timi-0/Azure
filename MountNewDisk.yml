@@ -6,7 +6,7 @@
   tasks:
    - name: "Attaching Data disk to Linux VM"
      vars:
-       rgname: "awx"
-       vmname: "AWX-REDHAT"
-       disksizegb: "10"
+       rgname: undefined
+       vmname: undefined
+       disksizegb: undefined
      shell: az vm disk attach --resource-group "{{ rgname }}" --vm-name "{{ vmname }}" --disk "awxdisk1" --size-gb "{{ disksizegb }}" --sku Standard_LRS --new
