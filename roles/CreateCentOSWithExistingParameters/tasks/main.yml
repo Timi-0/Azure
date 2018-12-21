@@ -1,3 +1,4 @@
+---
 - name: "Create a {{nic_root_name}}X network interface for each VM"
   azure_rm_networkinterface:
     name: "{{nic_root_name}}{{item}}"

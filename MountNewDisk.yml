@@ -1,8 +1,9 @@
 --- #To create and attach a new Data disk to an existing Linux virtual machine
 ##Create and attach VM Disk
 - name: "Attach Data disk to existing Linux VM"
-  connection: local
-  hosts: localhost
+  connection: ssh
+  hosts: Cent
+  remote_user: ansible
   tasks:
    - name: "Attaching Data disk to Linux VM"
      command: az vm disk attach --resource-group "{{ rgname }}" --vm-name "{{ vmname }}" --disk "awxdisk1" --size-gb "{{ disksizegb }}" --sku Standard_LRS --new

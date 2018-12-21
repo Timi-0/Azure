@@ -1,0 +1,4 @@
+---
+rgname: "awx"
+vmname: "Cent"
+disksizegb: "10"

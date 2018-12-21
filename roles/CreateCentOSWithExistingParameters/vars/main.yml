@@ -1,0 +1,11 @@
+---
+instances_number: 1
+resourcegroup_name: "awx"
+vm_root_name: "new-vm"
+vm_size: "Standard_B2s"
+managed_disk_type: "Standard_LRS"
+admin_username: "Timi0"
+virtualnetwork_name: "awx-vnet"
+securitygroup_name: "AWX-REDHAT-nsg"
+subnet_name: "default"
+project_prefix: "new"

@@ -1,0 +1,5 @@
+---
+vmname: "Cent"
+diskname: "newdisk"
+rgname: "awx"
+disksizegb: "10"
